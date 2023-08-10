@@ -2,8 +2,10 @@
 # OSU Email: gonzakyl@oregonstate.edu
 # Course: CS261 - Data Structures
 # Assignment: A6 Part 1
-# Due Date:
-# Description:
+# Due Date: 04 August 2023
+# Description: This file implements a Hashmap Class that can be used to
+#   store key-value pairs. A DynamicArray is used as the underlying data
+#   storage, while a LinkedList is utilized to manage collisions.
 
 
 from a6_include import (DynamicArray, LinkedList,
@@ -90,7 +92,14 @@ class HashMap:
 
     def put(self, key: str, value: object) -> None:
         """
-        TODO: Write this implementation
+        Updates the key-value pair in the given hashmap.
+        If the key already exists, only the value is updated.
+        Else, a new key-value is added.
+        Args:
+            key: New key
+            value: New value
+        Returns:
+            None
         """
         if self.table_load() >= 1.0:
             self.resize_table(2 * self._capacity)
@@ -136,7 +145,13 @@ class HashMap:
 
     def resize_table(self, new_capacity: int) -> None:
         """
-        TODO: Write this implementation
+        Resizes underlying DynamicArray of the given HashMap.
+        The new capacity must be a prime number and greater than 1.
+        All key-value pairs are rehashed.
+        Args:
+            new_capacity: New DynamicArray length
+        Returns:
+            None
         """
         cap = new_capacity
         if cap < 1:
@@ -183,7 +198,12 @@ class HashMap:
 
     def remove(self, key: str) -> None:
         """
-        TODO: Write this implementation
+        Remove the given key-value pair from the given HashMap.
+        If the key does not exist, this method does nothing.
+        Args:
+            key: Key-value pair to be removed
+        Returns:
+            None
         """
         idx = self._hash_function(key) % self._capacity
 
@@ -193,7 +213,8 @@ class HashMap:
 
     def get_keys_and_values(self) -> DynamicArray:
         """
-        TODO: Write this implementation
+        Returns a DynamicArray where each element is a tuple of (key, value)
+        pair from the given HashMap.
         """
         target_da = DynamicArray()
         for x in range(self._capacity):
@@ -206,12 +227,39 @@ class HashMap:
 
 def find_mode(da: DynamicArray) -> tuple[DynamicArray, int]:
     """
-    TODO: Write this implementation
+    Returns a tuple containing (DynamicArray of mode values, frequency).
+    Only returns the highest frequency values.
+    O(n) time complexity.
+    Args:
+        da: DynamicArray
+    Returns:
+        tuple: (DynamicArray of mode values, frequency)
     """
-    # if you'd like to use a hash map,
-    # use this instance of your Separate Chaining HashMap
     map = HashMap()
 
+    # Create HashMap of (Key, value-count) pairs
+    for x in range(da.length()):
+        if map.contains_key(da[x]):
+            val = map.get(da[x])
+            map.put(da[x], 1 + val)
+        else:
+            map.put(da[x], 1)
+
+    target_da = DynamicArray()
+    current_frequency = 0
+
+    # Create array of (key, value-count) pairs
+    count_da = map.get_keys_and_values()
+
+    for x in range(count_da.length()):
+        if count_da[x][1] > current_frequency:
+            current_frequency = count_da[x][1]
+            target_da = DynamicArray()
+            target_da.append(count_da[x][0])
+        elif count_da[x][1] == current_frequency:
+            target_da.append(count_da[x][0])
+
+    return target_da, current_frequency
 
 # ------------------- BASIC TESTING ---------------------------------------- #
 
