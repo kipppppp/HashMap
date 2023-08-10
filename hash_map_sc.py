@@ -142,7 +142,7 @@ class HashMap:
         if cap < 1:
             return
 
-        if not self._is_prime(cap) or cap < self._size:
+        while cap < self._size or not self._is_prime(cap):
             cap = self._next_prime(cap)
 
         key_value_da = self.get_keys_and_values()
