@@ -139,10 +139,10 @@ class HashMap:
         TODO: Write this implementation
         """
         cap = new_capacity
-        if cap < 1 or cap < self._size:
+        if cap < 1:
             return
 
-        if not self._is_prime(cap):
+        if not self._is_prime(cap) or cap < self._size:
             cap = self._next_prime(cap)
 
         key_value_da = self.get_keys_and_values()
@@ -186,7 +186,10 @@ class HashMap:
         TODO: Write this implementation
         """
         idx = self._hash_function(key) % self._capacity
-        self._buckets[idx].remove(key)
+
+        val = self._buckets[idx].remove(key)
+        if val:
+            self._size -= 1
 
     def get_keys_and_values(self) -> DynamicArray:
         """
