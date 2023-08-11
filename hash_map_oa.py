@@ -96,7 +96,7 @@ class HashMap:
         idx = idx_initial
         x = 1
         while self._buckets[idx] is not None:
-            if self._buckets[idx].key == key:
+            if self._buckets[idx].key == key and not self._buckets[idx].is_tombstone:
                 self._buckets[idx].value = value
                 return
             elif self._buckets[idx].is_tombstone:
