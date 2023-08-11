@@ -183,6 +183,7 @@ class HashMap:
         while self._buckets[idx] is not None and x < self._capacity:
             if self._buckets[idx].key == key and not self._buckets[idx].is_tombstone:
                 self._buckets[idx].is_tombstone = True
+                self._size -= 1
                 return
             idx = (idx_initial + (x**2)) % self._capacity
             x += 1
