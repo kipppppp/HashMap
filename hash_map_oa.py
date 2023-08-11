@@ -89,67 +89,147 @@ class HashMap:
         """
         TODO: Write this implementation
         """
-        pass
+        if self.table_load() >= 0.5:
+            self.resize_table(2 * self._capacity)
+
+        idx_initial = self._hash_function(key) % self._capacity
+        idx = idx_initial
+        x = 1
+        while self._buckets[idx] is not None:
+            if self._buckets[idx].key == key:
+                self._buckets[idx].value = value
+                return
+            elif self._buckets[idx].is_tombstone:
+                self._buckets[idx].key = key
+                self._buckets[idx].value = value
+                self._buckets[idx].is_tombstone = False
+                self._size += 1
+                return
+            idx = (idx_initial + (x**2)) % self._capacity
+            x += 1
+
+        self._buckets[idx] = HashEntry(key, value)
+        self._size += 1
 
     def table_load(self) -> float:
         """
         TODO: Write this implementation
         """
-        pass
+        return self._size / self._capacity
 
     def empty_buckets(self) -> int:
         """
         TODO: Write this implementation
         """
-        pass
+        counter = 0
+        for x in range(self._capacity):
+            if self._buckets[x] is None or self._buckets[x].is_tombstone:
+                counter += 1
+        return counter
 
     def resize_table(self, new_capacity: int) -> None:
         """
         TODO: Write this implementation
         """
-        pass
+        cap = new_capacity
+        if cap < self._size:
+            return
+
+        while not self._is_prime(cap):
+            cap = self._next_prime(cap)
+
+        key_value_da = self.get_keys_and_values()
+        self._capacity = cap
+        self.clear()
+
+        for x in range(key_value_da.length()):
+            self.put(key_value_da[x][0], key_value_da[x][1])
 
     def get(self, key: str) -> object:
         """
         TODO: Write this implementation
         """
-        pass
+        idx_initial = self._hash_function(key) % self._capacity
+        idx = idx_initial
+        x = 1
+        while self._buckets[idx] is not None and x < self._capacity:
+            if self._buckets[idx].key == key and not self._buckets[idx].is_tombstone:
+                return self._buckets[idx].value
+            idx = (idx_initial + (x**2)) % self._capacity
+            x += 1
+        return
 
     def contains_key(self, key: str) -> bool:
         """
         TODO: Write this implementation
         """
-        pass
+        idx_initial = self._hash_function(key) % self._capacity
+        idx = idx_initial
+        x = 1
+        while self._buckets[idx] is not None and x < self._capacity:
+            if self._buckets[idx].key == key and not self._buckets[idx].is_tombstone:
+                return True
+            idx = (idx_initial + (x ** 2)) % self._capacity
+            x += 1
+        return False
 
     def remove(self, key: str) -> None:
         """
         TODO: Write this implementation
         """
-        pass
+        idx_initial = self._hash_function(key) % self._capacity
+        idx = idx_initial
+        x = 1
+        while self._buckets[idx] is not None and x < self._capacity:
+            if self._buckets[idx].key == key and not self._buckets[idx].is_tombstone:
+                self._buckets[idx].is_tombstone = True
+                return
+            idx = (idx_initial + (x**2)) % self._capacity
+            x += 1
+        return
 
     def clear(self) -> None:
         """
         TODO: Write this implementation
         """
-        pass
+        self._buckets = DynamicArray()
+        for x in range(self._capacity):
+            self._buckets.append(None)
+        self._size = 0
 
     def get_keys_and_values(self) -> DynamicArray:
         """
         TODO: Write this implementation
         """
-        pass
+        target_da = DynamicArray()
+        for x in range(self._capacity):
+            if self._buckets[x] is not None and not self._buckets[x].is_tombstone:
+                target_tuple = self._buckets[x].key, self._buckets[x].value
+                target_da.append(target_tuple)
+        return target_da
 
     def __iter__(self):
         """
         TODO: Write this implementation
         """
-        pass
+        self._index = 0
+        self._progress = self._capacity - self.empty_buckets()
+
+        return self
 
     def __next__(self):
         """
         TODO: Write this implementation
         """
-        pass
+        if self._progress <= 0:
+            raise StopIteration
+        self._index += 1
+
+        while self._buckets[self._index] is None or self._buckets[self._index].is_tombstone:
+            self._index += 1
+
+        self._progress -= 1
+        return self._buckets[self._index]
 
 
 # ------------------- BASIC TESTING ---------------------------------------- #
