@@ -2,7 +2,7 @@
 # OSU Email: gonzakyl@oregonstate.edu
 # Course: CS261 - Data Structures
 # Assignment: A6 Part 1
-# Due Date: 04 August 2023
+# Due Date: 15 August 2023
 # Description: This file implements a Hashmap Class that can be used to
 #   store key-value pairs. A DynamicArray is used as the underlying data
 #   storage, while a LinkedList is utilized to manage collisions.
@@ -96,8 +96,8 @@ class HashMap:
         If the key already exists, only the value is updated.
         Else, a new key-value is added.
         Args:
-            key: New key
-            value: New value
+            key
+            value
         Returns:
             None
         """
@@ -215,6 +215,8 @@ class HashMap:
         """
         Returns a DynamicArray where each element is a tuple of (key, value)
         pair from the given HashMap.
+        Returns:
+            target_da
         """
         target_da = DynamicArray()
         for x in range(self._capacity):

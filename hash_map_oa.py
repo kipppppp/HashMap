@@ -2,8 +2,10 @@
 # OSU Email: gonzakyl@oregonstate.edu
 # Course: CS261 - Data Structures
 # Assignment: A6 Part 2
-# Due Date:
-# Description:
+# Due Date: 15 August 2023
+# Description: This file implements a HashMap Class that can be used to
+#   store key-value pairs. A DynamicArray is used as the underlying data
+#   storage. Open addressing is utilized to manage collisions.
 
 from a6_include import (DynamicArray, DynamicArrayException, HashEntry,
                         hash_function_1, hash_function_2)
@@ -87,7 +89,13 @@ class HashMap:
 
     def put(self, key: str, value: object) -> None:
         """
-        TODO: Write this implementation
+        Updates the key-value pair in the given HashMap.
+        If the key already exists, only the value is updated.
+        Args:
+            key
+            value
+        Returns:
+            None
         """
         if self.table_load() >= 0.5:
             self.resize_table(2 * self._capacity)
@@ -113,13 +121,18 @@ class HashMap:
 
     def table_load(self) -> float:
         """
-        TODO: Write this implementation
+        Returns the load factor of the HashMap.
+        (Number of elements) / (Number of buckets).
+        Returns:
+            Load factor
         """
         return self._size / self._capacity
 
     def empty_buckets(self) -> int:
         """
-        TODO: Write this implementation
+        Returns the number of empty buckets in the HashMap.
+        Returns:
+            counter: Number of empty buckets
         """
         counter = 0
         for x in range(self._capacity):
@@ -129,7 +142,14 @@ class HashMap:
 
     def resize_table(self, new_capacity: int) -> None:
         """
-        TODO: Write this implementation
+        Resizes the underlying DynamicArray of the given HashMap.
+        The new capacity must be a prime number greater than the current
+        number of elements in the HashMap.
+        All key-value pairs are rehashed.
+        Args:
+            new_capacity: New DynamicArray length
+        Returns:
+            None
         """
         cap = new_capacity
         if cap < self._size:
@@ -147,7 +167,11 @@ class HashMap:
 
     def get(self, key: str) -> object:
         """
-        TODO: Write this implementation
+        Returns the value associated with the given key, else None.
+        Args:
+            key: Key to find
+        Returns:
+            Value if key found, else None
         """
         idx_initial = self._hash_function(key) % self._capacity
         idx = idx_initial
@@ -161,7 +185,12 @@ class HashMap:
 
     def contains_key(self, key: str) -> bool:
         """
-        TODO: Write this implementation
+        Returns True if the given key is in the HashMap, else False.
+        An empty HashMap returns False.
+        Args:
+            key: Key to find
+        Returns:
+            bool: True if found, else False
         """
         idx_initial = self._hash_function(key) % self._capacity
         idx = idx_initial
@@ -175,7 +204,12 @@ class HashMap:
 
     def remove(self, key: str) -> None:
         """
-        TODO: Write this implementation
+        Remove the given key-value pair from the given HashMap.
+        If the key does not exist, this method does nothing.
+        Args:
+            key: Key-Value pair to be removed
+        Returns:
+            None
         """
         idx_initial = self._hash_function(key) % self._capacity
         idx = idx_initial
@@ -191,7 +225,7 @@ class HashMap:
 
     def clear(self) -> None:
         """
-        TODO: Write this implementation
+        Clears the entire HashMap contents without changing the capacity.
         """
         self._buckets = DynamicArray()
         for x in range(self._capacity):
@@ -200,7 +234,10 @@ class HashMap:
 
     def get_keys_and_values(self) -> DynamicArray:
         """
-        TODO: Write this implementation
+        Returns a DynamicArray where each element is a tuple of (key,
+        value) pair from the given HashMap.
+        Returns:
+            target_da
         """
         target_da = DynamicArray()
         for x in range(self._capacity):
@@ -211,24 +248,28 @@ class HashMap:
 
     def __iter__(self):
         """
-        TODO: Write this implementation
+        Return the iterator.
         """
         self._index = 0
+        # Track number of elements to return
         self._progress = self._capacity - self.empty_buckets()
 
         return self
 
     def __next__(self):
         """
-        TODO: Write this implementation
+        Obtain the next node and advance the iterator.
         """
         if self._progress <= 0:
             raise StopIteration
+
         self._index += 1
 
+        # Find next active value
         while self._buckets[self._index] is None or self._buckets[self._index].is_tombstone:
             self._index += 1
 
+        # Update element tracker
         self._progress -= 1
         return self._buckets[self._index]
 
